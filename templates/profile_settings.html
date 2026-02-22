@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+{% load math_filters %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockWatts - Profile Settings</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        'secondary': {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        'accent': {
+                            50: '#fef3c7',
+                            100: '#fde68a',
+                            200: '#fcd34d',
+                            300: '#fbbf24',
+                            400: '#f59e0b',
+                            500: '#d97706',
+                            600: '#b45309',
+                            700: '#92400e',
+                            800: '#78350f',
+                            900: '#451a03',
+                        },
+                        'danger': {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        },
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'slide-down': 'slideDown 0.4s ease-out',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+        }
+        
+        .gradient-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+        }
+        
+        .gradient-accent {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+        }
+        
+        .gradient-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #22c55e 75%, #16a34a 100%);
+        }
+        
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .profile-avatar {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            background-size: 400% 400%;
+            animation: gradientShift 4s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .settings-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-green-50 min-h-screen font-inter">
+    
+    <!-- Enhanced Header -->
+    <header class="relative gradient-header text-white shadow-2xl overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary-500 rounded-full opacity-20 animate-float"></div>
+            <div class="absolute -bottom-32 -left-32 w-64 h-64 bg-secondary-500 rounded-full opacity-20 animate-float" style="animation-delay: 1s;"></div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="relative z-20 border-b border-white/10">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <!-- Logo & Brand -->
+                    <div class="flex items-center space-x-4 animate-slide-up">
+                        <div class="relative">
+                            <div class="glass-morphism p-4 rounded-2xl">
+                                <i class="fas fa-user-cog text-3xl text-primary-300 animate-pulse"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold font-poppins bg-gradient-to-r from-white via-primary-200 to-secondary-200 bg-clip-text text-transparent">
+                                Profile Settings
+                            </h1>
+                            <p class="text-sm text-primary-200 font-medium">Manage your account preferences</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation Links -->
+                    <div class="hidden lg:flex items-center space-x-8 animate-slide-up" style="animation-delay: 0.2s;">
+                        <nav class="flex space-x-6">
+                            <a href="{% url 'dashboard' %}" class="text-white/80 hover:text-white transition-colors duration-300 font-medium flex items-center space-x-2">
+                                <i class="fas fa-tachometer-alt text-primary-300"></i>
+                                <span>Dashboard</span>
+                            </a>
+                            <a href="{% url 'live_market' %}" class="text-white/80 hover:text-white transition-colors duration-300 font-medium flex items-center space-x-2">
+                                <i class="fas fa-chart-line text-secondary-300"></i>
+                                <span>Live Market</span>
+                            </a>
+                            <a href="{% url 'profile_settings' %}" class="text-white border-b-2 border-primary-400 font-medium flex items-center space-x-2">
+                                <i class="fas fa-user-cog text-accent-300"></i>
+                                <span>Settings</span>
+                            </a>
+                        </nav>
+                    </div>
+                    
+                    <!-- User Profile -->
+                    <div class="flex items-center space-x-4 animate-slide-up" style="animation-delay: 0.4s;">
+                        <!-- Balance Display -->
+                        <div class="hidden md:block glass-morphism rounded-xl px-6 py-3 hover-lift">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 bg-primary-500/20 rounded-lg">
+                                    <i class="fas fa-wallet text-primary-200"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-primary-200 font-medium">Current Balance</p>
+                                    <p id="header-balance" class="text-lg font-bold text-white">₹{{ user_balance.balance|floatformat:2 }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- User Avatar -->
+                        <div class="flex items-center space-x-3 glass-morphism rounded-xl px-4 py-3">
+                            <div class="w-12 h-12 profile-avatar rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                {{ user.username|first|upper }}
+                            </div>
+                            <div class="hidden md:block text-left">
+                                <p class="font-semibold text-white text-sm">{{ user.get_full_name|default:user.username|title }}</p>
+                                <p class="text-xs text-primary-200">{{ user.email|truncatechars:25 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Profile Header -->
+        <div class="relative z-10 container mx-auto px-6 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center space-x-6 mb-6 md:mb-0">
+                    <div class="w-24 h-24 profile-avatar rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-2xl">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-2">{{ user.get_full_name|default:user.username|title }}</h2>
+                        <p class="text-primary-200 text-lg">{{ user.email }}</p>
+                        <div class="flex items-center mt-2 space-x-4">
+                            <span class="flex items-center text-sm text-primary-200">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                Member since {{ user.date_joined|date:"M Y" }}
+                            </span>
+                            <span class="flex items-center text-sm text-primary-200">
+                                <div class="w-2 h-2 bg-primary-400 rounded-full mr-2 animate-pulse"></div>
+                                Active Trader
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="glass-morphism rounded-xl p-4">
+                        <p class="text-2xl font-bold text-white">{{ total_purchases }}</p>
+                        <p class="text-xs text-primary-200">Purchases</p>
+                    </div>
+                    <div class="glass-morphism rounded-xl p-4">
+                        <p class="text-2xl font-bold text-white">{{ total_sales }}</p>
+                        <p class="text-xs text-primary-200">Sales</p>
+                    </div>
+                    <div class="glass-morphism rounded-xl p-4">
+                        <p class="text-2xl font-bold text-white">{{ active_listings_count }}</p>
+                        <p class="text-xs text-primary-200">Active</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        
+        <!-- Tab Navigation -->
+        <div class="mb-8">
+            <div class="flex flex-wrap gap-2 bg-white p-2 rounded-2xl shadow-lg">
+                <button class="tab-button active px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg" data-tab="profile">
+                    <i class="fas fa-user mr-2"></i>Profile Information
+                </button>
+                <button class="tab-button px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg text-gray-600" data-tab="security">
+                    <i class="fas fa-shield-alt mr-2"></i>Security
+                </button>
+                <button class="tab-button px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg text-gray-600" data-tab="wallet">
+                    <i class="fas fa-wallet mr-2"></i>Wallet
+                </button>
+                <button class="tab-button px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg text-gray-600" data-tab="analytics">
+                    <i class="fas fa-chart-bar mr-2"></i>Analytics
+                </button>
+                <button class="tab-button px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg text-gray-600" data-tab="preferences">
+                    <i class="fas fa-cog mr-2"></i>Preferences
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        
+        <!-- Profile Information Tab -->
+        <div id="profile" class="tab-content active">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Basic Information Form -->
+                <div class="settings-card rounded-2xl p-8 hover-lift">
+                    <div class="gradient-primary text-white px-6 py-4 rounded-xl mb-6 -mx-2">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-user-edit mr-3"></i>Basic Information
+                        </h3>
+                        <p class="text-primary-100 mt-1">Update your personal details</p>
+                    </div>
+                    
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update_profile">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-3">
+                                    <i class="fas fa-user mr-2 text-primary-500"></i>First Name
+                                </label>
+                                <input type="text" name="first_name" value="{{ user.first_name }}" 
+                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-3">
+                                    <i class="fas fa-user mr-2 text-primary-500"></i>Last Name
+                                </label>
+                                <input type="text" name="last_name" value="{{ user.last_name }}" 
+                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-envelope mr-2 text-secondary-500"></i>Email Address
+                            </label>
+                            <input type="email" name="email" value="{{ user.email }}" 
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-secondary-100 focus:border-secondary-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-at mr-2 text-accent-500"></i>Username
+                            </label>
+                            <input type="text" value="{{ user.username }}" disabled 
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-100 text-gray-500">
+                            <p class="text-xs text-gray-500 mt-2">Username cannot be changed</p>
+                        </div>
+                        
+                        <button type="submit" class="w-full gradient-primary text-white font-bold py-4 px-6 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                            <i class="fas fa-save mr-2"></i>Update Profile
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Profile Statistics -->
+                <div class="space-y-6">
+                    <!-- Account Overview -->
+                    <div class="settings-card rounded-2xl p-8 hover-lift">
+                        <div class="gradient-secondary text-white px-6 py-4 rounded-xl mb-6 -mx-2">
+                            <h3 class="text-xl font-bold flex items-center">
+                                <i class="fas fa-chart-pie mr-3"></i>Account Overview
+                            </h3>
+                            <p class="text-secondary-100 mt-1">Your trading summary</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="text-center p-4 bg-primary-50 rounded-xl">
+                                <p class="text-2xl font-bold text-primary-600">₹{{ purchases_data.total_spent|floatformat:0|default:0 }}</p>
+                                <p class="text-sm text-gray-600">Total Spent</p>
+                            </div>
+                            <div class="text-center p-4 bg-secondary-50 rounded-xl">
+                                <p class="text-2xl font-bold text-secondary-600">₹{{ sales_data.total_earned|floatformat:0|default:0 }}</p>
+                                <p class="text-sm text-gray-600">Total Earned</p>
+                            </div>
+                            <div class="text-center p-4 bg-accent-50 rounded-xl">
+                                <p class="text-2xl font-bold text-accent-600">{{ purchases_data.total_energy_bought|floatformat:0|default:0 }}</p>
+                                <p class="text-sm text-gray-600">kWh Bought</p>
+                            </div>
+                            <div class="text-center p-4 bg-green-50 rounded-xl">
+                                <p class="text-2xl font-bold text-green-600">{{ sales_data.total_energy_sold|floatformat:0|default:0 }}</p>
+                                <p class="text-sm text-gray-600">kWh Sold</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Total Listings:</span>
+                                <span class="font-bold">{{ total_listings_count }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Active Listings:</span>
+                                <span class="font-bold text-primary-600">{{ active_listings_count }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Success Rate:</span>
+                                <span class="font-bold text-green-600">
+                                    {% widthratio total_sales total_listings_count 100|default:0 %}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="settings-card rounded-2xl p-8 hover-lift">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-history mr-2 text-accent-500"></i>Recent Activity
+                        </h3>
+                        
+                        <div class="space-y-3 max-h-64 overflow-y-auto">
+                            {% for transaction in recent_transactions|slice:":5" %}
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 {% if transaction.buyer == user %}bg-primary-100{% else %}bg-secondary-100{% endif %} rounded-full flex items-center justify-center">
+                                        <i class="fas {% if transaction.buyer == user %}fa-arrow-down text-primary-600{% else %}fa-arrow-up text-secondary-600{% endif %} text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium">
+                                            {% if transaction.buyer == user %}Purchased{% else %}Sold{% endif %} {{ transaction.quantity }} kWh
+                                        </p>
+                                        <p class="text-xs text-gray-500">{{ transaction.timestamp|timesince }} ago</p>
+                                    </div>
+                                </div>
+                                <span class="font-bold text-gray-900">₹{{ transaction.total_price|floatformat:0 }}</span>
+                            </div>
+                            {% empty %}
+                            <p class="text-gray-500 text-center py-4">No recent activity</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div id="security" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Change Password Form -->
+                <div class="settings-card rounded-2xl p-8 hover-lift">
+                    <div class="bg-gradient-to-r from-danger-500 to-danger-600 text-white px-6 py-4 rounded-xl mb-6 -mx-2">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-key mr-3"></i>Change Password
+                        </h3>
+                        <p class="text-danger-100 mt-1">Update your account password</p>
+                    </div>
+                    
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="change_password">
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-lock mr-2 text-gray-500"></i>Current Password
+                            </label>
+                            <input type="password" name="current_password" required 
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-danger-100 focus:border-danger-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-lock mr-2 text-primary-500"></i>New Password
+                            </label>
+                            <input type="password" name="new_password" required minlength="8" 
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-lock mr-2 text-primary-500"></i>Confirm New Password
+                            </label>
+                            <input type="password" name="confirm_password" required minlength="8" 
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                        </div>
+                        
+                        <div class="bg-accent-50 border-l-4 border-accent-400 p-4 rounded">
+                            <div class="flex">
+                                <i class="fas fa-info-circle text-accent-600 mt-1 mr-3"></i>
+                                <div class="text-sm text-accent-700">
+                                    <p class="font-medium">Password Requirements:</p>
+                                    <ul class="mt-2 list-disc list-inside space-y-1">
+                                        <li>At least 8 characters long</li>
+                                        <li>Mix of letters and numbers recommended</li>
+                                        <li>Avoid common words or personal information</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-gradient-to-r from-danger-500 to-danger-600 hover:from-danger-600 hover:to-danger-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105">
+                            <i class="fas fa-shield-alt mr-2"></i>Change Password
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Security Information -->
+                <div class="space-y-6">
+                    <!-- Account Security Status -->
+                    <div class="settings-card rounded-2xl p-8 hover-lift">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-shield-check mr-3 text-primary-500"></i>Security Status
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-primary-50 rounded-xl">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check-circle text-primary-600 text-xl"></i>
+                                    <div>
+                                        <p class="font-medium text-gray-800">Password Protection</p>
+                                        <p class="text-sm text-gray-600">Your account is protected with a password</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-shield-alt text-primary-600"></i>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 bg-secondary-50 rounded-xl">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check-circle text-secondary-600 text-xl"></i>
+                                    <div>
+                                        <p class="font-medium text-gray-800">Email Verified</p>
+                                        <p class="text-sm text-gray-600">{{ user.email }} is verified</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-envelope-check text-secondary-600"></i>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 bg-accent-50 rounded-xl">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-clock text-accent-600 text-xl"></i>
+                                    <div>
+                                        <p class="font-medium text-gray-800">Last Login</p>
+                                        <p class="text-sm text-gray-600">{{ user.last_login|date:"M d, Y H:i"|default:"Never" }}</p>
+                                    </div>
+                                </div>
+                                <i class="fas fa-sign-in-alt text-accent-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Login Activity -->
+                    <div class="settings-card rounded-2xl p-8 hover-lift">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-history mr-2 text-secondary-500"></i>Login Activity
+                        </h3>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-desktop text-green-600 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium">Current Session</p>
+                                        <p class="text-xs text-gray-500">Web Browser</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-green-600 font-medium">Active Now</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-mobile-alt text-gray-600 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium">Previous Login</p>
+                                        <p class="text-xs text-gray-500">{{ user.last_login|date:"M d, Y H:i"|default:"No previous login" }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-gray-500">Ended</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallet Tab -->
+        <div id="wallet" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Add Balance Form -->
+                <div class="settings-card rounded-2xl p-8 hover-lift">
+                    <div class="gradient-accent text-white px-6 py-4 rounded-xl mb-6 -mx-2">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-plus-circle mr-3"></i>Add Balance
+                        </h3>
+                        <p class="text-accent-100 mt-1">Top up your trading wallet</p>
+                    </div>
+                    
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="add_balance">
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-rupee-sign mr-2 text-accent-500"></i>Amount to Add
+                            </label>
+                            <div class="relative">
+                                <input type="number" name="amount" min="1" step="0.01" placeholder="Enter amount" required 
+                                       class="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-accent-100 focus:border-accent-500 transition-all duration-200 text-lg font-medium bg-gray-50 hover:bg-white">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i class="fas fa-rupee-sign text-gray-400 text-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                            <div class="flex">
+                                <i class="fas fa-info-circle text-blue-600 mt-1 mr-3"></i>
+                                <div class="text-sm text-blue-700">
+                                    <p class="font-medium">Demo Mode:</p>
+                                    <p class="mt-1">This is a simulation. In a real application, this would integrate with a payment gateway.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full gradient-accent text-white font-bold py-4 px-6 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                            <i class="fas fa-credit-card mr-2"></i>Add to Wallet
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Wallet Information -->
+                <div class="space-y-6">
+                    <!-- Current Balance -->
+                    <div class="settings-card rounded-2xl p-8 hover-lift">
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-wallet text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-800">₹{{ user_balance.balance|floatformat:2 }}</h3>
+                            <p class="text-gray-600">Current Balance</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center p-4 bg-primary-50 rounded-xl">
+                                <i class="fas fa-arrow-down text-primary-600 text-xl mb-2"></i>
+                                <p class="text-lg font-bold text-primary-600">₹{{ purchases_data.total_spent|floatformat:0|default:0 }}</p>
+                                <p class="text-xs text-gray-600">Total Spent</p>
+                            </div>
+                            <div class="text-center p-4 bg-secondary-50 rounded-xl">
+                                <i class="fas fa-arrow-up text-secondary-600 text-xl mb-2"></i>
+                                <p class="text-lg font-bold text-secondary-600">₹{{ sales_data.total_earned|floatformat:0|default:0 }}</p>
+                                <p class="text-xs text-gray-600">Total Earned</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Transaction Summary -->
+                    <div class="settings-card rounded-2xl p-8 hover-lift">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-chart-line mr-2 text-primary-500"></i>Transaction Summary
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <span class="text-gray-600">Total Transactions:</span>
+                                <span class="font-bold">{{ total_purchases|add:total_sales }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-primary-50 rounded-lg">
+                                <span class="text-gray-600">Purchases:</span>
+                                <span class="font-bold text-primary-600">{{ total_purchases }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-secondary-50 rounded-lg">
+                                <span class="text-gray-600">Sales:</span>
+                                <span class="font-bold text-secondary-600">{{ total_sales }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-accent-50 rounded-lg">
+                                <span class="text-gray-600">Average Transaction:</span>
+                                <span class="font-bold text-accent-600">
+                                    ₹{% if total_purchases > 0 %}{{ purchases_data.total_spent|div:total_purchases|floatformat:2 }}{% else %}0.00{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+                
+                <!-- Trading Performance Chart -->
+                <div class="settings-card rounded-2xl p-8 hover-lift">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-chart-area mr-3 text-primary-500"></i>Trading Performance
+                    </h3>
+                    <div class="h-64">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Activity Distribution -->
+                <div class="settings-card rounded-2xl p-8 hover-lift">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-chart-pie mr-3 text-secondary-500"></i>Activity Distribution
+                    </h3>
+                    <div class="h-64">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="settings-card rounded-2xl p-6 text-center hover-lift">
+                    <div class="w-16 h-16 gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-trophy text-white text-2xl"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-800">
+                        {% widthratio total_sales total_listings_count 100|default:0 %}%
+                    </h4>
+                    <p class="text-gray-600">Success Rate</p>
+                </div>
+                
+                <div class="settings-card rounded-2xl p-6 text-center hover-lift">
+                    <div class="w-16 h-16 gradient-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-coins text-white text-2xl"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-800">
+                        ₹{% if total_sales > 0 %}{{ sales_data.total_earned|div:total_sales|floatformat:0 }}{% else %}0{% endif %}
+                    </h4>
+                    <p class="text-gray-600">Avg. Sale Value</p>
+                </div>
+                
+                <div class="settings-card rounded-2xl p-6 text-center hover-lift">
+                    <div class="w-16 h-16 gradient-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bolt text-white text-2xl"></i>
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-800">
+                        {{ sales_data.total_energy_sold|floatformat:0|default:0 }}
+                    </h4>
+                    <p class="text-gray-600">kWh Traded</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferences Tab -->
+        <div id="preferences" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Notification Preferences -->
+                <div class="settings-card rounded-2xl p-8 hover-lift">
+                    <div class="gradient-secondary text-white px-6 py-4 rounded-xl mb-6 -mx-2">
+                        <h3 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-bell mr-3"></i>Notifications
+                        </h3>
+                        <p class="text-secondary-100 mt-1">Manage your notification preferences</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Email Notifications</h4>
+                                <p class="text-sm text-gray-600">Receive updates via email</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Trade Alerts</h4>
+                                <p class="text-sm text-gray-600">Get notified of successful trades</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Market Updates</h4>
+                                <p class="text-sm text-gray-600">Price changes and market news</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Display Preferences -->
+                <div class="settings-card rounded-2xl p-8 hover-lift">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-palette mr-3 text-accent-500"></i>Display Preferences
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">Currency Display</label>
+                            <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                                <option>Indian Rupee (₹)</option>
+                                <option>US Dollar ($)</option>
+                                <option>Euro (€)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">Energy Unit</label>
+                            <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                                <option>Kilowatt Hour (kWh)</option>
+                                <option>Megawatt Hour (MWh)</option>
+                                <option>Watt Hour (Wh)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-3">Time Zone</label>
+                            <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all duration-200 bg-gray-50 hover:bg-white">
+                                <option>India Standard Time (IST)</option>
+                                <option>Coordinated Universal Time (UTC)</option>
+                                <option>Pacific Standard Time (PST)</option>
+                            </select>
+                        </div>
+                        
+                        <button class="w-full gradient-primary text-white font-bold py-3 px-6 rounded-xl hover:shadow-lg transition-all duration-300">
+                            <i class="fas fa-save mr-2"></i>Save Preferences
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success/Error Messages -->
+        {% if messages %}
+            <div class="fixed top-4 right-4 z-50 space-y-2">
+                {% for message in messages %}
+                <div class="notification px-6 py-4 rounded-xl shadow-2xl text-white font-medium max-w-sm transform translate-x-full transition-transform duration-300 {% if message.tags == 'error' %}bg-gradient-to-r from-danger-500 to-danger-600{% elif message.tags == 'success' %}gradient-primary{% else %}gradient-secondary{% endif %}">
+                    <div class="flex items-center">
+                        <div class="glass-morphism p-2 rounded-lg mr-3">
+                            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %}"></i>
+                        </div>
+                        <span>{{ message }}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" class="ml-4 glass-morphism p-1 rounded hover:bg-white/20">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="relative bg-gradient-to-r from-gray-800 to-gray-900 text-white mt-20 overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-primary-500 rounded-full opacity-10 animate-float transform -translate-x-48 -translate-y-48"></div>
+        </div>
+        
+        <div class="relative z-10 container mx-auto px-6 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="glass-morphism p-4 rounded-2xl">
+                            <i class="fas fa-bolt text-3xl text-primary-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold font-poppins">BlockWatts</h3>
+                            <p class="text-gray-300 text-sm">Energy Trading Platform</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        Leading the future of renewable energy trading with innovative technology solutions.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold font-poppins mb-6 text-primary-300">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="{% url 'dashboard' %}" class="text-gray-300 hover:text-white transition-colors">Dashboard</a></li>
+                        <li><a href="{% url 'live_market' %}" class="text-gray-300 hover:text-white transition-colors">Live Market</a></li>
+                        <li><a href="{% url 'profile_settings' %}" class="text-gray-300 hover:text-white transition-colors">Profile Settings</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold font-poppins mb-6 text-secondary-300">Support</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-envelope text-accent-400"></i>
+                            <span class="text-gray-400 text-sm">support@blockwatts.com</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-phone text-primary-400"></i>
+                            <span class="text-gray-400 text-sm">24/7 Support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="relative z-10 border-t border-white/10">
+            <div class="container mx-auto px-6 py-8 text-center">
+                <p class="text-gray-400">&copy; 2025 BlockWatts Inc. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setupTabs();
+            initializeCharts();
+            setupNotifications();
+            setupFormValidation();
+        });
+
+        // Tab Functionality
+        function setupTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.dataset.tab;
+
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active', 'text-white');
+                        btn.classList.add('text-gray-600');
+                    });
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active', 'text-white');
+                    button.classList.remove('text-gray-600');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+        }
+
+        // Initialize Charts
+        function initializeCharts() {
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart');
+            if (performanceCtx) {
+                new Chart(performanceCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Earnings (₹)',
+                            data: [1200, 1900, 3000, 2500, 4200, 3800],
+                            borderColor: '#22c55e',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: 'Spending (₹)',
+                            data: [800, 1200, 2000, 1800, 2800, 2400],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Activity Chart
+            const activityCtx = document.getElementById('activityChart');
+            if (activityCtx) {
+                new Chart(activityCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Purchases', 'Sales', 'Active Listings'],
+                        datasets: [{
+                            data: [{{ total_purchases }}, {{ total_sales }}, {{ active_listings_count }}],
+                            backgroundColor: ['#22c55e', '#3b82f6', '#f59e0b'],
+                            borderWidth: 0,
+                            cutout: '60%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Setup Notifications
+        function setupNotifications() {
+            const notifications = document.querySelectorAll('.notification');
+            notifications.forEach((notification, index) => {
+                setTimeout(() => {
+                    notification.classList.remove('translate-x-full');
+                }, 100 * (index + 1));
+                
+                setTimeout(() => {
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => notification.remove(), 300);
+                }, 5000 + (100 * index));
+            });
+        }
+
+        // Form Validation
+        function setupFormValidation() {
+            // Password confirmation validation
+            const newPassword = document.querySelector('input[name="new_password"]');
+            const confirmPassword = document.querySelector('input[name="confirm_password"]');
+            
+            if (newPassword && confirmPassword) {
+                confirmPassword.addEventListener('input', function() {
+                    if (this.value !== newPassword.value) {
+                        this.setCustomValidity('Passwords do not match');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+            }
+
+            // Amount validation
+            const amountInput = document.querySelector('input[name="amount"]');
+            if (amountInput) {
+                amountInput.addEventListener('input', function() {
+                    if (this.value < 0) {
+                        this.setCustomValidity('Amount must be positive');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+            }
+        }
+
+        // CSRF Token Helper
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

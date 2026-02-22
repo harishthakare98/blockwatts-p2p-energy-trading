@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockWatts - Professional Energy Trading Dashboard</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- ApexCharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        'secondary': {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        'accent': {
+                            50: '#fef3c7',
+                            100: '#fde68a',
+                            200: '#fcd34d',
+                            300: '#fbbf24',
+                            400: '#f59e0b',
+                            500: '#d97706',
+                            600: '#b45309',
+                            700: '#92400e',
+                            800: '#78350f',
+                            900: '#451a03',
+                        },
+                        'danger': {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        },
+                        'dark': {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'slide-down': 'slideDown 0.4s ease-out',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    boxShadow: {
+                        'custom': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'custom-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'custom-xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.125);
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+        }
+        
+        .gradient-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+        }
+        
+        .gradient-accent {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+        }
+        
+        .gradient-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #22c55e 75%, #16a34a 100%);
+        }
+        
+        .gradient-footer {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        }
+        
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .profile-avatar {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            background-size: 400% 400%;
+            animation: gradientShift 4s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .stats-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .notification-badge {
+            position: relative;
+        }
+        
+        .notification-badge::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Enhanced Dropdown Scrolling Styles */
+        .dropdown-menu-items {
+            max-height: 300px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .dropdown-menu-items::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .dropdown-menu-items::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        
+        .dropdown-menu-items::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            border-radius: 10px;
+        }
+        
+        .dropdown-menu-items::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #16a34a, #2563eb);
+        }
+        
+        /* Improved dropdown positioning */
+        #user-dropdown {
+            max-height: 90vh;
+            overflow: visible;
+        }
+        
+        /* Ensure dropdown stays within viewport */
+        @media (max-height: 700px) {
+            #user-dropdown {
+                max-height: 80vh;
+            }
+            .dropdown-menu-items {
+                max-height: 200px;
+            }
+        }
+        
+        /* Custom scrollbar for main content */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #16a34a, #2563eb);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-green-50 min-h-screen font-inter">
+    
+    <!-- Enhanced Professional Header -->
+    <header class="relative gradient-header text-white shadow-2xl overflow-hidden">
+        <!-- Animated Background Elements -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary-500 rounded-full opacity-20 animate-float"></div>
+            <div class="absolute -bottom-32 -left-32 w-64 h-64 bg-secondary-500 rounded-full opacity-20 animate-float" style="animation-delay: 1s;"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent-500 rounded-full opacity-10 animate-pulse-slow"></div>
+        </div>
+        
+        <!-- Main Navigation -->
+        <nav class="relative z-20 border-b border-white/10">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <!-- Enhanced Logo & Brand -->
+                    <div class="flex items-center space-x-4 animate-slide-up">
+                        <div class="relative">
+                            <div class="glass-morphism p-4 rounded-2xl">
+                                <i class="fas fa-bolt text-3xl text-primary-300 animate-pulse"></i>
+                            </div>
+                            <div class="absolute -top-1 -right-1 w-4 h-4 bg-accent-400 rounded-full animate-bounce-slow"></div>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold font-poppins bg-gradient-to-r from-white via-primary-200 to-secondary-200 bg-clip-text text-transparent">
+                                BlockWatts
+                            </h1>
+                            <p class="text-sm text-primary-200 font-medium">Professional Energy Trading Platform</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation Links & Actions -->
+                    <div class="hidden lg:flex items-center space-x-8 animate-slide-up" style="animation-delay: 0.2s;">
+                        <nav class="flex space-x-6">
+                            <a href="#" class="text-white border-b-2 border-primary-400 font-medium flex items-center space-x-2">
+                                <i class="fas fa-tachometer-alt text-primary-300"></i>
+                                <span>Dashboard</span>
+                            </a>
+                            <a href="{% url 'live_market' %}" class="text-white/80 hover:text-white transition-colors duration-300 font-medium flex items-center space-x-2">
+                                <i class="fas fa-chart-line text-secondary-300"></i>
+                                <span>Live Market</span>
+                            </a>
+                            <a href="#" class="text-white/80 hover:text-white transition-colors duration-300 font-medium flex items-center space-x-2 notification-badge">
+                                <i class="fas fa-bell text-accent-300"></i>
+                                <span>Alerts</span>
+                            </a>
+                        </nav>
+                    </div>
+                    
+                    <!-- Enhanced User Profile Section with Fixed Dropdown -->
+                    <div class="flex items-center space-x-4 animate-slide-up" style="animation-delay: 0.4s;">
+                        <!-- Balance Display -->
+                        <div class="hidden md:block glass-morphism rounded-xl px-6 py-3 hover-lift">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 bg-primary-500/20 rounded-lg">
+                                    <i class="fas fa-wallet text-primary-200"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-primary-200 font-medium">Available Balance</p>
+                                    <p id="header-balance" class="text-lg font-bold text-white">₹{{ user.balance.balance|floatformat:2 }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- User Profile Dropdown with Fixed Scrolling -->
+                        <div class="relative">
+                            <button id="user-menu-button" class="flex items-center space-x-3 glass-morphism rounded-xl px-4 py-3 hover:bg-white/20 transition-all duration-300 hover-lift group">
+                                <!-- Enhanced Avatar -->
+                                <div class="relative">
+                                    <div class="w-12 h-12 profile-avatar rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                        {{ user.username|first|upper }}
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary-400 rounded-full border-2 border-white flex items-center justify-center">
+                                        <i class="fas fa-check text-xs text-white"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- User Info -->
+                                <div class="hidden md:block text-left">
+                                    <p class="font-semibold text-white text-sm">{{ user.get_full_name|default:user.username|title }}</p>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs text-primary-200">{{ user.email|truncatechars:20 }}</span>
+                                        <div class="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></div>
+                                        <span class="text-xs text-primary-300">Online</span>
+                                    </div>
+                                </div>
+                                
+                                <i class="fas fa-chevron-down text-sm text-white/70 group-hover:text-white transition-colors duration-300 transform group-hover:rotate-180 transition-transform duration-300"></i>
+                            </button>
+                            
+                            <!-- FIXED Enhanced Dropdown Menu with Proper Scrolling -->
+                            <div id="user-dropdown" class="hidden absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-[9999] overflow-hidden animate-slide-down max-h-[90vh]">
+                                <!-- Profile Header -->
+                                <div class="gradient-primary p-6 text-white relative overflow-hidden flex-shrink-0">
+                                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full transform translate-x-12 -translate-y-12"></div>
+                                    <div class="relative z-10 flex items-center space-x-4">
+                                        <div class="w-16 h-16 profile-avatar rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                                            {{ user.username|first|upper }}
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-bold">{{ user.get_full_name|default:user.username|title }}</h3>
+                                            <p class="text-primary-100 text-sm">{{ user.email }}</p>
+                                            <div class="flex items-center mt-2 space-x-2">
+                                                <div class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+                                                <span class="text-xs text-primary-100">Active Trader</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Quick Stats -->
+                                <div class="p-4 bg-gray-50 border-b border-gray-100 flex-shrink-0">
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div class="text-center">
+                                            <p class="text-xs text-gray-500 font-medium">Balance</p>
+                                            <p class="text-sm font-bold text-primary-600">₹{{ user.balance.balance|floatformat:0 }}</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-xs text-gray-500 font-medium">Trades</p>
+                                            <p class="text-sm font-bold text-secondary-600">{{ todays_trades|default:0 }}</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-xs text-gray-500 font-medium">Savings</p>
+                                            <p class="text-sm font-bold text-accent-600">12.5%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- SCROLLABLE Menu Items Section -->
+                                <div class="dropdown-menu-items py-3">
+                                    <a href="{% url 'profile_settings' %}" class="flex items-center px-6 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 group">
+                                        <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-primary-200 transition-colors duration-200">
+                                            <i class="fas fa-user text-primary-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Profile Settings</p>
+                                            <p class="text-xs text-gray-500">Manage your account</p>
+                                        </div>
+                                        <i class="fas fa-chevron-right text-gray-400 ml-auto group-hover:text-primary-600"></i>
+                                    </a>
+                                    
+                                    <a href="#" class="flex items-center px-6 py-3 text-gray-700 hover:bg-secondary-50 hover:text-secondary-600 transition-all duration-200 group">
+                                        <div class="w-10 h-10 bg-secondary-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-secondary-200 transition-colors duration-200">
+                                            <i class="fas fa-chart-bar text-secondary-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Trading Analytics</p>
+                                            <p class="text-xs text-gray-500">View performance</p>
+                                        </div>
+                                        <i class="fas fa-chevron-right text-gray-400 ml-auto group-hover:text-secondary-600"></i>
+                                    </a>
+                                    
+                                    <a href="#" class="flex items-center px-6 py-3 text-gray-700 hover:bg-accent-50 hover:text-accent-600 transition-all duration-200 group">
+                                        <div class="w-10 h-10 bg-accent-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-accent-200 transition-colors duration-200">
+                                            <i class="fas fa-wallet text-accent-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Wallet & Payments</p>
+                                            <p class="text-xs text-gray-500">Manage funds</p>
+                                        </div>
+                                        <i class="fas fa-chevron-right text-gray-400 ml-auto group-hover:text-accent-600"></i>
+                                    </a>
+                                    
+                                    <a href="#" class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50 transition-all duration-200 group">
+                                        <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-gray-200 transition-colors duration-200">
+                                            <i class="fas fa-cog text-gray-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Settings</p>
+                                            <p class="text-xs text-gray-500">Preferences</p>
+                                        </div>
+                                        <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+                                    </a>
+                                    
+                                    <a href="#" class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-50 transition-all duration-200 group">
+                                        <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-gray-200 transition-colors duration-200">
+                                            <i class="fas fa-question-circle text-gray-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Help & Support</p>
+                                            <p class="text-xs text-gray-500">Get assistance</p>
+                                        </div>
+                                        <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+                                    </a>
+                                    
+                                    <a href="#" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 transition-all duration-200 group">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-blue-200 transition-colors duration-200">
+                                            <i class="fas fa-file-alt text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Reports</p>
+                                            <p class="text-xs text-gray-500">Download reports</p>
+                                        </div>
+                                        <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+                                    </a>
+                                    
+                                    <a href="#" class="flex items-center px-6 py-3 text-gray-700 hover:bg-purple-50 transition-all duration-200 group">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-purple-200 transition-colors duration-200">
+                                            <i class="fas fa-star text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Favorites</p>
+                                            <p class="text-xs text-gray-500">Saved items</p>
+                                        </div>
+                                        <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+                                    </a>
+                                    
+                                    <a href="#" class="flex items-center px-6 py-3 text-gray-700 hover:bg-green-50 transition-all duration-200 group">
+                                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors duration-200">
+                                            <i class="fas fa-leaf text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Sustainability</p>
+                                            <p class="text-xs text-gray-500">Green metrics</p>
+                                        </div>
+                                        <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+                                    </a>
+                                </div>
+                                
+                                <!-- Logout Section (Fixed at bottom) -->
+                                <div class="border-t border-gray-100 p-4 flex-shrink-0">
+                                    <a href="{% url 'logout' %}" class="flex items-center justify-center w-full px-4 py-3 text-danger-600 hover:bg-danger-50 rounded-lg transition-all duration-200 font-medium group">
+                                        <i class="fas fa-sign-out-alt mr-3 group-hover:scale-110 transition-transform duration-200"></i>
+                                        <span>Sign Out</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile Menu Button -->
+                        <button class="lg:hidden glass-morphism p-3 rounded-lg">
+                            <i class="fas fa-bars text-white"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Welcome Banner -->
+        <div class="relative z-10 container mx-auto px-6 py-12">
+            <div class="text-center animate-fade-in">
+                <div class="flex justify-center items-center space-x-4 mb-6">
+                    <div class="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
+                    <div class="w-3 h-3 bg-secondary-400 rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
+                    <div class="w-2 h-2 bg-accent-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-bold font-poppins mb-4 bg-gradient-to-r from-white via-primary-200 to-secondary-200 bg-clip-text text-transparent">
+                    Welcome back, {{ user.username|title }}!
+                </h2>
+                <p class="text-xl text-primary-100 max-w-2xl mx-auto leading-relaxed">
+                    Monitor your renewable energy portfolio, execute trades, and optimize your sustainable investments with ease.
+                </p>
+                <div class="mt-8 flex justify-center space-x-4">
+                    <div class="glass-morphism px-6 py-3 rounded-full">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-primary-400 rounded-full animate-pulse"></div>
+                            <span class="text-primary-200 text-sm font-medium">Live Market Data</span>
+                        </div>
+                    </div>
+                    <div class="glass-morphism px-6 py-3 rounded-full">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-secondary-400 rounded-full animate-pulse"></div>
+                            <span class="text-secondary-200 text-sm font-medium">24/7 Trading</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Content -->
+    <main class="container mx-auto px-6 py-8">
+        
+        <!-- Professional Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Current Balance Card -->
+            <div class="stats-card rounded-2xl p-6 hover-lift animate-slide-up border border-white/20">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600 mb-1 uppercase tracking-wide">Current Balance</p>
+                        <p id="current-balance" class="text-3xl font-bold text-gray-900 mb-1">₹{{ user.balance.balance|floatformat:2 }}</p>
+                        <p class="text-xs text-primary-600 font-medium flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i>Available for Trading
+                        </p>
+                    </div>
+                    <div class="bg-gradient-to-br from-primary-100 to-primary-200 p-4 rounded-2xl">
+                        <i class="fas fa-wallet text-primary-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Trades Card -->
+            <div class="stats-card rounded-2xl p-6 hover-lift animate-slide-up border border-white/20" style="animation-delay: 0.1s;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600 mb-1 uppercase tracking-wide">Today's Trades</p>
+                        <p id="todays-trades-count" class="text-3xl font-bold text-gray-900 mb-1">{{ todays_trades|default:0 }}</p>
+                        <p class="text-xs text-secondary-600 font-medium flex items-center">
+                            <i class="fas fa-chart-line mr-1"></i>Completed Today
+                        </p>
+                    </div>
+                    <div class="bg-gradient-to-br from-secondary-100 to-secondary-200 p-4 rounded-2xl">
+                        <i class="fas fa-exchange-alt text-secondary-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Average Price Card -->
+            <div class="stats-card rounded-2xl p-6 hover-lift animate-slide-up border border-white/20" style="animation-delay: 0.2s;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600 mb-1 uppercase tracking-wide">Avg. Price</p>
+                        <p class="text-3xl font-bold text-gray-900 mb-1">₹{{ avg_price|floatformat:4|default:"0.0000" }}</p>
+                        <p class="text-xs text-accent-600 font-medium flex items-center">
+                            <i class="fas fa-rupee-sign mr-1"></i>Per kWh
+                        </p>
+                    </div>
+                    <div class="bg-gradient-to-br from-accent-100 to-accent-200 p-4 rounded-2xl">
+                        <i class="fas fa-chart-bar text-accent-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Listings Card -->
+            <div class="stats-card rounded-2xl p-6 hover-lift animate-slide-up border border-white/20" style="animation-delay: 0.3s;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600 mb-1 uppercase tracking-wide">Active Listings</p>
+                        <p id="active-listings-count" class="text-3xl font-bold text-gray-900 mb-1">{{ active_listings.count }}</p>
+                        <p class="text-xs text-primary-600 font-medium flex items-center">
+                            <i class="fas fa-list mr-1"></i>Market Ready
+                        </p>
+                    </div>
+                    <div class="bg-gradient-to-br from-primary-100 to-primary-200 p-4 rounded-2xl">
+                        <i class="fas fa-bolt text-primary-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Create Listing Form -->
+        <div class="bg-white rounded-2xl shadow-custom-xl overflow-hidden mb-8 hover-lift animate-fade-in border border-white/20">
+            <div class="gradient-primary text-white px-8 py-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full transform translate-x-12 -translate-y-12 animate-float"></div>
+                <div class="relative z-10 flex items-center">
+                    <div class="glass-morphism p-4 rounded-2xl mr-6">
+                        <i class="fas fa-plus-circle text-3xl text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold font-poppins mb-2">Create New Energy Listing</h3>
+                        <p class="text-primary-100 text-lg">List your renewable energy for trading in the marketplace</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-8">
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="mb-6 p-6 rounded-2xl shadow-custom {% if message.tags == 'error' %}bg-gradient-to-r from-danger-50 to-danger-100 border-l-4 border-danger-500 text-danger-700{% elif message.tags == 'success' %}bg-gradient-to-r from-primary-50 to-primary-100 border-l-4 border-primary-500 text-primary-700{% else %}bg-gradient-to-r from-secondary-50 to-secondary-100 border-l-4 border-secondary-500 text-secondary-700{% endif %} animate-slide-up">
+                        <div class="flex items-center">
+                            <div class="p-2 {% if message.tags == 'error' %}bg-danger-200{% elif message.tags == 'success' %}bg-primary-200{% else %}bg-secondary-200{% endif %} rounded-full mr-4">
+                                <i class="fas {% if message.tags == 'error' %}fa-exclamation-triangle{% elif message.tags == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %} text-lg"></i>
+                            </div>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form id="energy-listing-form" method="post" class="space-y-8">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Price Field -->
+                        <div class="group">
+                            <label for="{{ form.price_per_kWh.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider">
+                                <i class="fas fa-rupee-sign mr-2 text-primary-500"></i>{{ form.price_per_kWh.label }}
+                            </label>
+                            <div class="relative">
+                                <input type="number" name="{{ form.price_per_kWh.name }}" id="{{ form.price_per_kWh.id_for_label }}" 
+                                       step="0.0001" min="0" placeholder="Enter price per kWh" 
+                                       class="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all duration-200 text-lg font-medium bg-gray-50 hover:bg-white">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i class="fas fa-rupee-sign text-gray-400 text-lg"></i>
+                                </div>
+                            </div>
+                            {% if form.price_per_kWh.help_text %}
+                                <p class="mt-3 text-sm text-gray-600 flex items-center">
+                                    <i class="fas fa-info-circle mr-2 text-primary-400"></i>{{ form.price_per_kWh.help_text }}
+                                </p>
+                            {% endif %}
+                            {% if form.price_per_kWh.errors %}
+                                <div class="mt-3 text-sm text-danger-600">
+                                    {% for error in form.price_per_kWh.errors %}
+                                        <p class="flex items-center"><i class="fas fa-exclamation-circle mr-2"></i>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Quantity Field -->
+                        <div class="group">
+                            <label for="{{ form.quantity_kWh.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider">
+                                <i class="fas fa-bolt mr-2 text-accent-500"></i>{{ form.quantity_kWh.label }}
+                            </label>
+                            <div class="relative">
+                                <input type="number" name="{{ form.quantity_kWh.name }}" id="{{ form.quantity_kWh.id_for_label }}" 
+                                       step="0.01" min="0.01" placeholder="Enter energy quantity" 
+                                       class="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-accent-100 focus:border-accent-500 transition-all duration-200 text-lg font-medium bg-gray-50 hover:bg-white">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i class="fas fa-bolt text-gray-400 text-lg"></i>
+                                </div>
+                            </div>
+                            {% if form.quantity_kWh.help_text %}
+                                <p class="mt-3 text-sm text-gray-600 flex items-center">
+                                    <i class="fas fa-info-circle mr-2 text-accent-400"></i>{{ form.quantity_kWh.help_text }}
+                                </p>
+                            {% endif %}
+                            {% if form.quantity_kWh.errors %}
+                                <div class="mt-3 text-sm text-danger-600">
+                                    {% for error in form.quantity_kWh.errors %}
+                                        <p class="flex items-center"><i class="fas fa-exclamation-circle mr-2"></i>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Balance Warning -->
+                    <div id="balance-warning" class="hidden bg-gradient-to-r from-danger-50 to-danger-100 border-l-4 border-danger-500 text-danger-700 p-6 rounded-2xl shadow-custom animate-slide-up">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-danger-200 rounded-full mr-4">
+                                <i class="fas fa-exclamation-triangle text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold">Insufficient Balance!</p>
+                                <p class="text-sm">Total value exceeds your available balance.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Total Preview -->
+                    <div class="bg-gradient-to-r from-gray-50 via-blue-50 to-green-50 rounded-2xl p-8 border-2 border-gray-100 shadow-custom">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xl font-bold text-gray-700 flex items-center">
+                                <i class="fas fa-calculator mr-3 text-primary-500 text-2xl"></i>
+                                Total Listing Value:
+                            </span>
+                            <span id="total-preview" class="text-4xl font-bold text-primary-600">₹0.00</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600 font-medium">Current Balance:</span>
+                                <span class="font-bold text-gray-800">₹{{ user.balance.balance|floatformat:2 }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600 font-medium">Remaining Balance:</span>
+                                <span id="remaining-balance" class="font-bold text-gray-800">₹{{ user.balance.balance|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Form Actions -->
+                    <div class="flex flex-col sm:flex-row gap-6 pt-4">
+                        <button 
+                            type="submit"
+                            id="create-listing-btn"
+                            class="flex-1 gradient-primary text-white font-bold py-5 px-10 rounded-2xl hover:shadow-custom-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-lg flex items-center justify-center space-x-3"
+                        >
+                            <i class="fas fa-plus text-xl"></i>
+                            <span>Create Energy Listing</span>
+                        </button>
+                        <button 
+                            type="button" 
+                            onclick="resetForm()"
+                            class="sm:w-auto bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-700 font-bold py-5 px-10 rounded-2xl transition-all duration-300 hover:shadow-custom flex items-center justify-center space-x-2"
+                        >
+                            <i class="fas fa-undo"></i>
+                            <span>Reset Form</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            
+            <!-- Active Listings -->
+            <div class="xl:col-span-1">
+                <div class="bg-white rounded-2xl shadow-custom-xl overflow-hidden hover-lift border border-white/20">
+                    <div class="gradient-secondary text-white px-6 py-6">
+                        <h3 class="text-xl font-bold flex items-center font-poppins">
+                            <i class="fas fa-store mr-3"></i>Active Energy Listings
+                        </h3>
+                        <p class="text-secondary-100 mt-2">Available for purchase</p>
+                    </div>
+                    
+                    <div id="active-listings-container" class="p-6 max-h-96 overflow-y-auto space-y-4">
+                        {% for listing in active_listings %}
+                        <div class="listing-item bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl p-5 hover:shadow-custom transition-all duration-300 border border-gray-100" data-listing-id="{{ listing.id }}">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-3">
+                                        <div class="w-10 h-10 profile-avatar rounded-full flex items-center justify-center text-white font-bold mr-3">
+                                            {{ listing.seller.username|first|upper }}
+                                        </div>
+                                        <div>
+                                            <span class="font-bold text-gray-800">{{ listing.seller.username|title }}</span>
+                                            {% if listing.seller == user %}
+                                                <span class="ml-2 px-3 py-1 bg-primary-100 text-primary-800 text-xs rounded-full font-medium">Your Listing</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex items-center justify-between">
+                                            <span class="flex items-center text-gray-600">
+                                                <i class="fas fa-bolt text-accent-500 w-4 mr-2"></i>
+                                                Energy Quantity:
+                                            </span>
+                                            <span class="font-bold">{{ listing.quantity_kWh }} kWh</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="flex items-center text-gray-600">
+                                                <i class="fas fa-rupee-sign text-primary-500 w-4 mr-2"></i>
+                                                Price per kWh:
+                                            </span>
+                                            <span class="font-bold">₹{{ listing.price_per_kWh|floatformat:4 }}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between border-t pt-2">
+                                            <span class="flex items-center text-gray-600 font-medium">
+                                                <i class="fas fa-calculator text-secondary-500 w-4 mr-2"></i>
+                                                Total Value:
+                                            </span>
+                                            <span class="font-bold text-lg text-secondary-600">₹{{ listing.total_value|floatformat:2 }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% if listing.seller != user %}
+                            <button 
+                                onclick="buyEnergy({{ listing.id }}, '{{ listing.seller.username }}', {{ listing.quantity_kWh }}, {{ listing.total_value }})"
+                                class="w-full gradient-primary text-white font-bold py-3 px-6 rounded-xl hover:shadow-custom-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2"
+                            >
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Purchase Energy</span>
+                            </button>
+                            {% else %}
+                            <button 
+                                onclick="deactivateListing({{ listing.id }})"
+                                class="w-full bg-gradient-to-r from-danger-500 to-danger-600 hover:from-danger-600 hover:to-danger-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 hover:shadow-custom-lg flex items-center justify-center space-x-2"
+                            >
+                                <i class="fas fa-trash"></i>
+                                <span>Remove Listing</span>
+                            </button>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-12 text-gray-500">
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-inbox text-4xl text-gray-400"></i>
+                            </div>
+                            <p class="text-lg font-semibold">No Active Listings</p>
+                            <p class="text-sm mt-2">Create your first listing to start trading!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="xl:col-span-2">
+                <div class="bg-white rounded-2xl shadow-custom-xl overflow-hidden hover-lift border border-white/20">
+                    <div class="gradient-accent text-white px-6 py-6">
+                        <h3 class="text-xl font-bold flex items-center font-poppins">
+                            <i class="fas fa-chart-line mr-3"></i>Energy Price Chart
+                        </h3>
+                        <p class="text-accent-100 mt-2">Real-time market data and trends</p>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex gap-4 mb-6">
+                            <button class="time-filter active px-6 py-3 gradient-primary text-white rounded-xl text-sm font-bold shadow-custom" data-period="24h">
+                                <i class="fas fa-clock mr-2"></i>24 Hours
+                            </button>
+                            <button class="time-filter px-6 py-3 bg-gray-100 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-200 transition-colors" data-period="7d">
+                                <i class="fas fa-calendar-week mr-2"></i>7 Days
+                            </button>
+                            <button class="time-filter px-6 py-3 bg-gray-100 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-200 transition-colors" data-period="30d">
+                                <i class="fas fa-calendar-alt mr-2"></i>30 Days
+                            </button>
+                        </div>
+                        
+                        <div id="chart-loading" class="flex items-center justify-center h-96 bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl">
+                            <div class="text-center">
+                                <div class="w-16 h-16 gradient-primary rounded-full flex items-center justify-center mb-6 mx-auto animate-pulse">
+                                    <i class="fas fa-chart-line text-white text-2xl"></i>
+                                </div>
+                                <p class="text-lg font-semibold text-gray-700">Loading Market Data...</p>
+                                <p class="text-sm text-gray-500 mt-2">Fetching real-time pricing information</p>
+                            </div>
+                        </div>
+                        
+                        <div id="candlestick-chart" class="h-96 rounded-2xl overflow-hidden" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Transactions Table -->
+        <div class="mt-8 bg-white rounded-2xl shadow-custom-xl overflow-hidden hover-lift border border-white/20">
+            <div class="bg-gradient-to-r from-secondary-600 via-primary-600 to-accent-600 text-white px-8 py-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold flex items-center font-poppins">
+                            <i class="fas fa-history mr-3"></i>Recent Transactions
+                        </h3>
+                        <p class="text-blue-100 mt-2">Your complete trading history</p>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-4">
+                        <button class="glass-morphism px-4 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                            <i class="fas fa-download mr-2"></i>Export
+                        </button>
+                        <button class="glass-morphism px-4 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                            <i class="fas fa-filter mr-2"></i>Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
+                        <tr>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Transaction Type</th>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Counterparty</th>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Energy Quantity</th>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Unit Price</th>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Total Amount</th>
+                            <th class="px-8 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Date & Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-tbody" class="divide-y divide-gray-100">
+                        {% for transaction in recent_transactions %}
+                        <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50 transition-all duration-200">
+                            <td class="px-8 py-5">
+                                {% if transaction.buyer == user %}
+                                <span class="inline-flex items-center px-4 py-2 text-sm font-bold rounded-full bg-gradient-to-r from-primary-100 to-primary-200 text-primary-800 shadow-custom">
+                                    <i class="fas fa-arrow-down mr-2"></i>Purchase
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center px-4 py-2 text-sm font-bold rounded-full bg-gradient-to-r from-danger-100 to-danger-200 text-danger-800 shadow-custom">
+                                    <i class="fas fa-arrow-up mr-2"></i>Sale
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 profile-avatar rounded-full flex items-center justify-center text-white font-bold mr-4">
+                                        {% if transaction.buyer == user %}
+                                            {{ transaction.seller.username|first|upper }}
+                                        {% else %}
+                                            {{ transaction.buyer.username|first|upper }}
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-900">
+                                            {% if transaction.buyer == user %}
+                                                {{ transaction.seller.username|title }}
+                                            {% else %}
+                                                {{ transaction.buyer.username|title }}
+                                            {% endif %}
+                                        </p>
+                                        <p class="text-xs text-gray-500">Energy Trader</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="flex items-center">
+                                    <i class="fas fa-bolt text-accent-500 mr-2"></i>
+                                    <span class="text-sm font-bold text-gray-900">{{ transaction.quantity }} kWh</span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="flex items-center">
+                                    <i class="fas fa-rupee-sign text-primary-500 mr-2"></i>
+                                    <span class="text-sm font-bold text-gray-900">₹{{ transaction.price_per_kWh|floatformat:4 }}</span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-secondary-100 to-secondary-200 text-secondary-800 rounded-full font-bold text-sm shadow-custom">
+                                    ₹{{ transaction.total_price|floatformat:2 }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-5 text-sm text-gray-500">
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock mr-2 text-gray-400"></i>
+                                    <div>
+                                        <p class="font-medium">{{ transaction.timestamp|date:"M d, Y" }}</p>
+                                        <p class="text-xs">{{ transaction.timestamp|date:"H:i A" }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr id="no-transactions-row">
+                            <td colspan="6" class="px-8 py-16 text-center text-gray-500">
+                                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <i class="fas fa-inbox text-4xl text-gray-400"></i>
+                                </div>
+                                <p class="text-xl font-bold mb-2">No Transactions Yet</p>
+                                <p class="text-sm">Start trading to see your transaction history here.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Enhanced Professional Footer -->
+    <footer class="relative gradient-footer text-white mt-20 overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-primary-500 rounded-full opacity-10 animate-float transform -translate-x-48 -translate-y-48"></div>
+            <div class="absolute bottom-0 right-0 w-80 h-80 bg-secondary-500 rounded-full opacity-10 animate-float transform translate-x-40 translate-y-40" style="animation-delay: 2s;"></div>
+        </div>
+        
+        <!-- Main Footer Content -->
+        <div class="relative z-10 container mx-auto px-6 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="lg:col-span-1">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="glass-morphism p-4 rounded-2xl">
+                            <i class="fas fa-bolt text-3xl text-primary-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold font-poppins">BlockWatts</h3>
+                            <p class="text-gray-300 text-sm">Energy Trading Platform</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed mb-6">
+                        Leading the future of renewable energy trading with blockchain technology and sustainable solutions for a cleaner tomorrow.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="glass-morphism p-3 rounded-lg hover:bg-white/20 transition-all duration-300 group">
+                            <i class="fab fa-twitter text-primary-400 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="glass-morphism p-3 rounded-lg hover:bg-white/20 transition-all duration-300 group">
+                            <i class="fab fa-linkedin text-secondary-400 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="glass-morphism p-3 rounded-lg hover:bg-white/20 transition-all duration-300 group">
+                            <i class="fab fa-github text-accent-400 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Platform Links -->
+                <div>
+                    <h4 class="text-lg font-bold font-poppins mb-6 text-primary-300">Platform</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right mr-2 group-hover:translate-x-1 transition-transform text-primary-400"></i>
+                            Dashboard
+                        </a></li>
+                        <li><a href="{% url 'live_market' %}" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right mr-2 group-hover:translate-x-1 transition-transform text-primary-400"></i>
+                            Live Markets
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right mr-2 group-hover:translate-x-1 transition-transform text-primary-400"></i>
+                            Trading Analytics
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right mr-2 group-hover:translate-x-1 transition-transform text-primary-400"></i>
+                            Portfolio Management
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <!-- Resources -->
+                <div>
+                    <h4 class="text-lg font-bold font-poppins mb-6 text-secondary-300">Resources</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right mr-2 group-hover:translate-x-1 transition-transform text-secondary-400"></i>
+                            Documentation
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right mr-2 group-hover:translate-x-1 transition-transform text-secondary-400"></i>
+                            API Reference
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right mr-2 group-hover:translate-x-1 transition-transform text-secondary-400"></i>
+                            Help Center
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right mr-2 group-hover:translate-x-1 transition-transform text-secondary-400"></i>
+                            Community Forum
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact & Support -->
+                <div>
+                    <h4 class="text-lg font-bold font-poppins mb-6 text-accent-300">Support</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="glass-morphism p-2 rounded-lg">
+                                <i class="fas fa-envelope text-accent-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">Email Support</p>
+                                <p class="text-gray-400 text-sm">support@blockwatts.com</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="glass-morphism p-2 rounded-lg">
+                                <i class="fas fa-phone text-primary-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">24/7 Helpline</p>
+                                <p class="text-gray-400 text-sm">+1-800-BLOCKWATTS</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="glass-morphism p-2 rounded-lg">
+                                <i class="fas fa-map-marker-alt text-secondary-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">Headquarters</p>
+                                <p class="text-gray-400 text-sm">San Francisco, CA</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Bottom -->
+        <div class="relative z-10 border-t border-white/10">
+            <div class="container mx-auto px-6 py-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center space-x-6 mb-4 md:mb-0">
+                        <p class="text-gray-400">&copy; 2025 BlockWatts Inc. All rights reserved.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Privacy Policy</a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Terms of Service</a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Cookie Policy</a>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-primary-400 rounded-full animate-pulse"></div>
+                            <span class="text-primary-300 text-sm font-medium">All Systems Operational</span>
+                        </div>
+                        <div class="glass-morphism px-4 py-2 rounded-lg">
+                            <span class="text-white text-sm">Version 2.1.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript with Complete Functionality and Fixed Dropdown -->
+    <script>
+        let candlestickChart = null;
+        let currentBalance = parseFloat('{{ user.balance.balance|default:0 }}');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFormCalculation();
+            setupUserDropdown();
+            setupTimeFilterButtons();
+            generateSampleChart();
+            initializeAnimations();
+            setupDropdownScrolling();
+        });
+
+        function setupDropdownScrolling() {
+            // Ensure dropdown stays within viewport bounds
+            const adjustDropdownPosition = () => {
+                const dropdown = document.getElementById('user-dropdown');
+                const button = document.getElementById('user-menu-button');
+                
+                if (!dropdown || !button) return;
+                
+                const buttonRect = button.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+                const dropdownHeight = dropdown.offsetHeight;
+                
+                // Check if dropdown would go beyond viewport
+                if (buttonRect.bottom + dropdownHeight > viewportHeight) {
+                    // Position dropdown above the button if not enough space below
+                    dropdown.style.bottom = '100%';
+                    dropdown.style.top = 'auto';
+                    dropdown.style.marginBottom = '12px';
+                    dropdown.style.marginTop = '0';
+                } else {
+                    // Default positioning below button
+                    dropdown.style.top = '100%';
+                    dropdown.style.bottom = 'auto';
+                    dropdown.style.marginTop = '12px';
+                    dropdown.style.marginBottom = '0';
+                }
+            };
+
+            // Adjust position when dropdown opens
+            document.getElementById('user-menu-button').addEventListener('click', function() {
+                setTimeout(adjustDropdownPosition, 10);
+            });
+
+            // Adjust on window resize
+            window.addEventListener('resize', adjustDropdownPosition);
+        }
+
+        function initializeAnimations() {
+            const cards = document.querySelectorAll('.stats-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+
+        function setupUserDropdown() {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdown = document.getElementById('user-dropdown');
+            
+            if (userMenuButton && userDropdown) {
+                userMenuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (!userDropdown.contains(e.target) && !userMenuButton.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+                
+                userDropdown.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+        }
+
+        function setupFormCalculation() {
+            const priceInput = document.getElementById('id_price_per_kWh');
+            const quantityInput = document.getElementById('id_quantity_kWh');
+            
+            if (priceInput) priceInput.addEventListener('input', updateTotalPreview);
+            if (quantityInput) quantityInput.addEventListener('input', updateTotalPreview);
+            
+            updateTotalPreview();
+        }
+
+        function updateTotalPreview() {
+            const priceInput = document.getElementById('id_price_per_kWh');
+            const quantityInput = document.getElementById('id_quantity_kWh');
+            const totalPreview = document.getElementById('total-preview');
+            const remainingBalance = document.getElementById('remaining-balance');
+            const balanceWarning = document.getElementById('balance-warning');
+            const submitBtn = document.getElementById('create-listing-btn');
+            
+            if (priceInput && quantityInput && totalPreview) {
+                const price = parseFloat(priceInput.value) || 0;
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const total = price * quantity;
+                const remaining = currentBalance - total;
+                
+                totalPreview.textContent = '₹' + total.toFixed(2);
+                remainingBalance.textContent = '₹' + remaining.toFixed(2);
+                
+                if (total > currentBalance) {
+                    balanceWarning.classList.remove('hidden');
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    balanceWarning.classList.add('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        function resetForm() {
+            document.querySelector('form').reset();
+            updateTotalPreview();
+            document.getElementById('balance-warning').classList.add('hidden');
+        }
+
+        // ENHANCED BUY ENERGY FUNCTION
+        function buyEnergy(listingId, sellerName, quantity, totalPrice) {
+            if (totalPrice > currentBalance) {
+                showNotification('Insufficient balance to buy this listing!', 'error');
+                return;
+            }
+            
+            if (confirm(`Purchase ${quantity} kWh from ${sellerName} for ₹${totalPrice.toFixed(2)}?`)) {
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+                button.disabled = true;
+
+                fetch('/api/buy-energy/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify({
+                        listing_id: listingId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update balance
+                        currentBalance = data.new_balance;
+                        updateBalanceDisplay(currentBalance);
+                        
+                        // Add transaction to table
+                        addTransactionToTable({
+                            type: 'buy',
+                            counterparty: data.seller_name,
+                            quantity: data.quantity,
+                            total_price: data.total_price,
+                            price_per_kWh: data.price_per_kWh,
+                            timestamp: new Date()
+                        });
+                        
+                        // Remove listing from display
+                        removeListing(listingId);
+                        
+                        // Update stats
+                        updateTodaysTrades();
+                        
+                        showNotification(`Energy purchased successfully! ₹${data.total_price.toFixed(2)} spent.`, 'success');
+                    } else {
+                        showNotification(data.error || 'Failed to purchase energy', 'error');
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Network error occurred', 'error');
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                });
+            }
+        }
+
+        // ENHANCED DEACTIVATE LISTING FUNCTION
+        function deactivateListing(listingId) {
+            if (confirm('Are you sure you want to remove this listing? Your balance will be refunded.')) {
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Removing...';
+                button.disabled = true;
+
+                fetch('/api/deactivate-listing/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify({
+                        listing_id: listingId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update balance
+                        currentBalance = data.new_balance;
+                        updateBalanceDisplay(currentBalance);
+                        
+                        // Remove listing from display
+                        removeListing(listingId);
+                        
+                        // Update active listings count
+                        updateActiveListingsCount();
+                        
+                        showNotification(data.message, 'success');
+                    } else {
+                        showNotification(data.error || 'Failed to remove listing', 'error');
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Network error occurred', 'error');
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                });
+            }
+        }
+
+        // UPDATE BALANCE DISPLAY
+        function updateBalanceDisplay(newBalance) {
+            const currentBalanceElements = document.querySelectorAll('#current-balance, #header-balance');
+            currentBalanceElements.forEach(element => {
+                element.textContent = '₹' + newBalance.toFixed(2);
+            });
+            updateTotalPreview(); // Recalculate form validation
+        }
+
+        // ADD TRANSACTION TO TABLE
+        function addTransactionToTable(transaction) {
+            const tbody = document.getElementById('transactions-tbody');
+            const noTransactionsRow = document.getElementById('no-transactions-row');
+            
+            if (noTransactionsRow) {
+                noTransactionsRow.remove();
+            }
+            
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50 transition-all duration-200 bg-green-50';
+            
+            const typeClass = transaction.type === 'buy' ? 'primary' : 'danger';
+            const typeIcon = transaction.type === 'buy' ? 'arrow-down' : 'arrow-up';
+            const typeText = transaction.type === 'buy' ? 'Purchase' : 'Sale';
+            
+            row.innerHTML = `
+                <td class="px-8 py-5">
+                    <span class="inline-flex items-center px-4 py-2 text-sm font-bold rounded-full bg-gradient-to-r from-${typeClass}-100 to-${typeClass}-200 text-${typeClass}-800 shadow-custom">
+                        <i class="fas fa-${typeIcon} mr-2"></i>${typeText}
+                    </span>
+                </td>
+                <td class="px-8 py-5">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 profile-avatar rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            ${transaction.counterparty.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-gray-900">${transaction.counterparty}</p>
+                            <p class="text-xs text-gray-500">Energy Trader</p>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-8 py-5">
+                    <div class="flex items-center">
+                        <i class="fas fa-bolt text-accent-500 mr-2"></i>
+                        <span class="text-sm font-bold text-gray-900">${transaction.quantity} kWh</span>
+                    </div>
+                </td>
+                <td class="px-8 py-5">
+                    <div class="flex items-center">
+                        <i class="fas fa-rupee-sign text-primary-500 mr-2"></i>
+                        <span class="text-sm font-bold text-gray-900">₹${transaction.price_per_kWh.toFixed(4)}</span>
+                    </div>
+                </td>
+                <td class="px-8 py-5">
+                    <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-secondary-100 to-secondary-200 text-secondary-800 rounded-full font-bold text-sm shadow-custom">
+                        ₹${transaction.total_price.toFixed(2)}
+                    </span>
+                </td>
+                <td class="px-8 py-5 text-sm text-gray-500">
+                    <div class="flex items-center">
+                        <i class="fas fa-clock mr-2 text-gray-400"></i>
+                        <div>
+                            <p class="font-medium">Just now</p>
+                            <p class="text-xs">Latest</p>
+                        </div>
+                    </div>
+                </td>
+            `;
+            
+            tbody.insertBefore(row, tbody.firstChild);
+            
+            // Remove highlight after 3 seconds
+            setTimeout(() => {
+                row.classList.remove('bg-green-50');
+            }, 3000);
+        }
+
+        // REMOVE LISTING FROM DISPLAY
+        function removeListing(listingId) {
+            const listing = document.querySelector(`[data-listing-id="${listingId}"]`);
+            if (listing) {
+                listing.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                listing.style.opacity = '0';
+                listing.style.transform = 'translateX(-20px)';
+                setTimeout(() => {
+                    listing.remove();
+                    checkEmptyListings();
+                }, 300);
+            }
+        }
+
+        // CHECK IF LISTINGS ARE EMPTY
+        function checkEmptyListings() {
+            const container = document.getElementById('active-listings-container');
+            const listings = container.querySelectorAll('.listing-item');
+            
+            if (listings.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-inbox text-4xl text-gray-400"></i>
+                        </div>
+                        <p class="text-lg font-semibold">No Active Listings</p>
+                        <p class="text-sm mt-2">Create your first listing to start trading!</p>
+                    </div>
+                `;
+            }
+        }
+
+        // UPDATE ACTIVE LISTINGS COUNT
+        function updateActiveListingsCount() {
+            const activeCount = document.querySelectorAll('.listing-item').length;
+            const countElement = document.getElementById('active-listings-count');
+            if (countElement) {
+                countElement.textContent = activeCount;
+            }
+        }
+
+        // UPDATE TODAY'S TRADES COUNT
+        function updateTodaysTrades() {
+            const tradesElement = document.getElementById('todays-trades-count');
+            if (tradesElement) {
+                const currentCount = parseInt(tradesElement.textContent) || 0;
+                tradesElement.textContent = currentCount + 1;
+            }
+        }
+
+        // GET CSRF TOKEN
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // ENHANCED NOTIFICATION SYSTEM
+        function showNotification(message, type) {
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-4 right-4 z-50 px-6 py-4 rounded-xl shadow-custom-xl text-white font-medium max-w-sm ${
+                type === 'success' ? 'gradient-primary' : 
+                type === 'error' ? 'bg-gradient-to-r from-danger-500 to-danger-600' : 
+                'gradient-secondary'
+            } transform translate-x-full transition-transform duration-300`;
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <div class="glass-morphism p-2 rounded-lg mr-3">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    </div>
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 glass-morphism p-1 rounded hover:bg-white/20">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.remove('translate-x-full'), 100);
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // CHART FUNCTIONS
+        function generateSampleChart() {
+            const sampleData = [];
+            const now = new Date();
+            
+            for (let i = 50; i >= 0; i--) {
+                const date = new Date(now.getTime() - (i * 60 * 60 * 1000));
+                const basePrice = 5.0 + Math.sin(i * 0.1) * 2;
+                
+                const open = basePrice + (Math.random() - 0.5) * 0.5;
+                const close = open + (Math.random() - 0.5) * 0.8;
+                const high = Math.max(open, close) + Math.random() * 0.4;
+                const low = Math.min(open, close) - Math.random() * 0.4;
+                
+                sampleData.push({
+                    x: date.getTime(),
+                    y: [
+                        Math.max(0.1, open).toFixed(4),
+                        Math.max(high, open, close).toFixed(4),
+                        Math.max(0.1, Math.min(low, open, close)).toFixed(4),
+                        Math.max(0.1, close).toFixed(4)
+                    ]
+                });
+            }
+            
+            renderChart(sampleData);
+        }
+
+        function renderChart(data) {
+            const options = {
+                series: [{
+                    name: 'Energy Price',
+                    data: data
+                }],
+                chart: {
+                    type: 'candlestick',
+                    height: 384,
+                    background: 'transparent',
+                    toolbar: { 
+                        show: true,
+                        tools: {
+                            download: true,
+                            selection: true,
+                            zoom: true,
+                            zoomin: true,
+                            zoomout: true,
+                            pan: true,
+                        }
+                    },
+                    animations: {
+                        enabled: true,
+                        easing: 'easeinout',
+                        speed: 800,
+                    }
+                },
+                title: {
+                    text: 'Energy Price (₹/kWh)',
+                    align: 'left',
+                    style: {
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        color: '#374151'
+                    }
+                },
+                xaxis: {
+                    type: 'datetime',
+                    labels: {
+                        style: {
+                            colors: '#6B7280',
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                yaxis: {
+                    title: { 
+                        text: 'Price (₹/kWh)',
+                        style: {
+                            color: '#374151',
+                            fontSize: '14px',
+                            fontWeight: 600,
+                        }
+                    },
+                    labels: {
+                        formatter: function(val) {
+                            return '₹' + parseFloat(val).toFixed(4);
+                        },
+                        style: {
+                            colors: '#6B7280',
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                plotOptions: {
+                    candlestick: {
+                        colors: {
+                            upward: '#22c55e',
+                            downward: '#ef4444'
+                        }
+                    }
+                },
+                grid: {
+                    show: true,
+                    borderColor: '#e5e7eb',
+                    strokeDashArray: 3,
+                },
+                tooltip: {
+                    theme: 'light',
+                    style: {
+                        fontSize: '12px',
+                        fontFamily: 'Inter, sans-serif'
+                    }
+                }
+            };
+
+            if (candlestickChart) {
+                candlestickChart.destroy();
+            }
+
+            candlestickChart = new ApexCharts(document.querySelector("#candlestick-chart"), options);
+            candlestickChart.render().then(() => {
+                document.getElementById('chart-loading').style.display = 'none';
+                document.getElementById('candlestick-chart').style.display = 'block';
+            });
+        }
+
+        function setupTimeFilterButtons() {
+            const filterButtons = document.querySelectorAll('.time-filter');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('gradient-primary', 'text-white', 'shadow-custom');
+                        btn.classList.add('bg-gray-100', 'text-gray-700');
+                    });
+                    
+                    this.classList.add('gradient-primary', 'text-white', 'shadow-custom');
+                    this.classList.remove('bg-gray-100', 'text-gray-700');
+                    
+                    generateSampleChart();
+                });
+            });
+        }
+
+        // Form submission animation
+        document.getElementById('energy-listing-form').addEventListener('submit', function() {
+            const button = document.getElementById('create-listing-btn');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i>Creating Listing...';
+            button.disabled = true;
+        });
+
+        // Success message handling
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' and 'listing created' in message.message|lower %}
+                    setTimeout(() => {
+                        location.reload(); // Reload to get updated balance and listings
+                    }, 2000);
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </script>
+</body>
+</html>

@@ -1,6 +1,4 @@
-Here’s a more professional, polished `README.md` using your same content (clear structure, consistent headings, proper tables, and cleaner formatting). You can copy–paste this directly:
 
-```markdown
 # ⚡ BlockWatts  
 **Peer-to-Peer Renewable Energy Trading Platform**
 
